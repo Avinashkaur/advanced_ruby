@@ -4,3 +4,4 @@ class Calculator
   end
 end
 Calculator.new.calculate(2,:+,3)
+Calculator.new.calculate(3,:*,8)
