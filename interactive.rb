@@ -7,7 +7,7 @@ loop do
       puts eval(expr)
       expr = ""
     end
-    exit(0) if expr =~ /q/i
+    exit(0) if expr =~ /^q$/i
   rescue
     puts "Error!!..Enter again"
     expr = ""
