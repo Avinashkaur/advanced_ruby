@@ -1,10 +1,9 @@
 class Program
   def self.show_output(name, info)
     define_method("#{name}") do |info|
-      puts "\nYou created the following method:"
-      puts "\ndef #{name}"
-      puts "#{info}"
-      puts "end"
+      puts "\nYou created method: #{name}"
+      puts "Output:\n"
+      eval(info)
     end
   end
 end

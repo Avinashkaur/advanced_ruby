@@ -13,15 +13,11 @@ class ShoppingList
   end
 end
 s1 = ShoppingList.new
-ans = 'y'
-while ans =~ /[y]/i
-  puts "enter item name"
-  item_name = gets.chomp
-  puts "quantity?"
-  quantity = gets.chomp
-  s1.items { add(item_name, quantity) }
-  puts "Enter more? (y/n)"
-  ans = gets.chomp
+s1.items do 
+  add("toothpaste", 2)
+  add("cold cream", 3)
+  add("biscuits", 6)
+  add("shirt", 2)
 end
-puts "Your Shopping List--"
+puts "Your Shopping List-->"
 puts s1.show
