@@ -2,8 +2,11 @@ class Program
   def self.show_output(name, info)
     define_method("#{name}") do |info|
       puts "\nYou created method: #{name}"
-      puts "Output:\n"
-      eval(info)
+      begin
+        eval(info)
+      rescue
+        exit(0)
+      end
     end
   end
 end

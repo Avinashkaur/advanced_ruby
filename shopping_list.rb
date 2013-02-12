@@ -1,15 +1,20 @@
 class ShoppingList
   def initialize
-    @list = []
+    @list = {}
   end
   def items(&block)
     instance_eval(&block)
   end
   def add(name, quantity)
-    @list << "#{name} :#{quantity} \n"
+    # @list << "#{name} :#{quantity} \n"
+    if @list.has_key?(name)
+      @list[name] = quantity
+    else
+      @list[name] = quantity
+    end
   end
   def show
-    @list.join
+    puts "#{name}--#{quantity}"
   end
 end
 s1 = ShoppingList.new
@@ -20,4 +25,5 @@ s1.items do
   add("shirt", 2)
 end
 puts "Your Shopping List-->"
-puts s1.show
+# puts s1.show
+s1.show
