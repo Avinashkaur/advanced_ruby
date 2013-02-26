@@ -1,9 +1,16 @@
 $object_array = []
 
 module ObjectStore
-   module ClassMethods
+  module ClassMethods
     def validate_presence_of(*args)
       args_array = args
+      args_array.each do |element|
+        if (element.size == 0)
+          exit(0)
+        end
+      end
+    end
+    def create_method(args_array)
       ghostclass = class<<self; self; end
       ghostclass.instance_eval do
         args_array.each do |arg|
@@ -21,11 +28,13 @@ module ObjectStore
       end
     end
   end
-  
   def save
     begin
       if validate 
         $object_array << self
+        arr = []
+        self.instance_variables.each { |ele| arr << ele.to_s.gsub!(/\@/, "")}
+        Play.create_method(arr)
       else
         puts "This object cannot be inserted into the array!!"
       end
@@ -33,12 +42,10 @@ module ObjectStore
       p "Module cannot be included!!"
     end
   end
-
   def self.included(klass)
     klass.extend ClassMethods
   end
 end
-
 class Play
   include ObjectStore
   attr_accessor :age, :fname, :email
@@ -61,8 +68,6 @@ p3.fname = "avinash"
 p3.age = 19
 p3.email = "avi.kaur9@gmail.com"
 p3.save
-
-
 Play.find_by_age(23)
 Play.find_by_fname("avinash")
-
+Play.find_by_email("avinash.kaur@vinsol.com")
