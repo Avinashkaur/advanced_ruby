@@ -5,22 +5,22 @@ def get_methods(filename)
     file.each_line.first.chomp
   end
 end
-
 def create_new_class(klass, filename)
   method_array = get_methods(filename)
   method_array.split(",").each do |method_name|
     $method_array_name << method_name
   end
   Object::const_set(klass.to_sym, Class.new do
-    for i in 0..($method_array_name.size - 1)
-      attr_accessor $method_array_name[i].to_sym
+    $method_array_name.each do |element|
+      attr_accessor element.to_sym
     end
-  end
-    )
+  end)
 end
 def create_object_array(filename, klass)
-    File.open(filename, "r") do |file|  
-      file.each_line do |line|
+  File.open(filename, "r") do |file|  
+    file.each_line do |line|
+      method_names = get_methods(filename)
+      if !(line.match(method_names))
         object = klass.new
         records = line.split(",").each { |element| element.strip! }
         for i in 0..($method_array_name.size-1)
@@ -29,12 +29,12 @@ def create_object_array(filename, klass)
         $object_array << object
       end
     end
+  end
 end
-
 def display_object_array(klass)
-  for j in 1..($object_array.size - 1)
-    for i in 0..($method_array_name.size-1)
-      puts " #{$object_array[0].send $method_array_name[i]}: #{$object_array[j].send $method_array_name[i]}"
+  $object_array.each do |object|
+    $method_array_name.each do |meth|
+      puts "#{object.send meth}"
     end
   end
 end
