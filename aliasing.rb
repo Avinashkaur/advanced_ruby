@@ -2,34 +2,23 @@ $methods_scope = {}
 module MyModule
   module ClassMethods
     def chained_aliasing(fname, lname)
-      user_label = 'public'
+      user_label = ''
       $methods_scope.each_pair do |key, value|
-        user_label = key.intern if (value == fname) 
-        original_method, original_method_with, original_method_without = function_name(fname, lname)
-        
-        # define_method(original_method_without) do
-        #   send (original_method)
-        # end
-        # define_method(original_method_with) do
-        #   puts "--logging start"
-        #   send (original_method)      
-        #   puts "--logging end"
-        # end
-        body = %{
-          #{user_label}
-          def #{original_method_without}
-            send #{original_method}
-          end
-          def #{original_method_with}
-            puts "--logging start"
-            send #{original_method}      
-            puts "--logging end"
-          end
-        }
-        # puts self
-        puts body
-        self.class_eval body
+        user_label = key if value.include?(fname)
       end
+      original_method, original_method_with, original_method_without = function_name(fname, lname)
+      body = %{
+        #{user_label}
+        def #{original_method_without}
+          #{original_method}
+        end
+        def #{original_method_with}
+          puts "--logging start"
+          #{original_method}      
+          puts "--logging end"
+        end
+      }
+      class_eval body
     end
   end
   def self.included(klass)
@@ -40,7 +29,6 @@ module MyModule
     puts $methods_scope
   end
 end
-
 def function_name(fname, lname)
   check = fname.to_s.match(/[!|?]/)
   original_method = "#{fname}"
@@ -54,7 +42,6 @@ def function_name(fname, lname)
   return original_method, original_method_with, original_method_without
 end
 class Hello
-  
   def greet
     puts "hello"
   end
@@ -73,10 +60,9 @@ class Hello
 end
 say = Hello.new
 say.greet_with_logger
-# say.greet_without_logger
+say.greet_without_logger
 
-# say.correct_with_logger?
-# say.correct_without_logger?
+say.correct_with_logger?
+say.correct_without_logger?
 
 # say.secret_with_logger
-# say.secret
