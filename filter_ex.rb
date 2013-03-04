@@ -22,11 +22,10 @@ module FilterModule
       target_method_array.each do |meth|
         METHOD_HASH[meth] = instance_method(meth)
       end
-
       args_array.each do |meth|
         if meth.class == Hash
           target_method_array = meth.values_at(:only) if meth.has_key?(:only)
-          target_method_array -= meth.values_at(:except) if meth.has_key?(:except)
+          target_method_array -= meth.values_at(:except).flatten if meth.has_key?(:except)
         else
           filter_methods.push(meth)
         end 
@@ -63,19 +62,19 @@ end
 class MyClass
   include FilterModule
   def say
-    puts "said"
+    puts "say method"
   end
   def sleep
-    puts "slept"
+    puts "sleep method"
   end
   def greet
-    puts "welcome"
+    puts "greet method"
   end
   def bye
-    puts "bye"
+    puts "bye method"
   end
   def hello
-    puts "hey!"
+    puts "hello method"
   end
   before_filter :greet, :only=>[:sleep]
   after_filter :say, :bye, :except=>[:hello]
