@@ -1,12 +1,24 @@
 module MyModule
 
   module ClassMethods
+    def rename_methods(fname, lname)
+      check = fname.to_s.match(/[!|?]/)
+      original_method = "#{fname}"
+      original_method_with = "#{fname}_with_#{lname}"
+      original_method_without = "#{fname}_without_#{lname}"
+      if !(check.nil?)
+        temp = fname.to_s.gsub(check[0],"")
+        original_method_with = "#{temp}_with_#{lname}#{check[0]}"
+        original_method_without = "#{temp}_without_#{lname}#{check[0]}"
+      end
+      return original_method, original_method_with, original_method_without
+    end
     def chained_aliasing(fname, lname)
       user_label = ''
       const_get(:Methods_scope).each_pair do |key, value|
         user_label = key if value.include?(fname)
       end
-      original_method, original_method_with, original_method_without = function_name(fname, lname)
+      original_method, original_method_with, original_method_without = rename_methods(fname, lname)
       hash = self.const_get(:METHOD_HASH)
       hash[original_method] = instance_method(original_method)
       body = %{
@@ -28,7 +40,7 @@ module MyModule
       class_eval body
     end
   end
-  
+
   def self.included(klass)
     klass.extend ClassMethods
     klass.const_set(:METHOD_HASH, {})
@@ -39,18 +51,7 @@ module MyModule
     klass.const_set(:Methods_scope, methods_scope)
   end
 end
-def function_name(fname, lname)
-  check = fname.to_s.match(/[!|?]/)
-  original_method = "#{fname}"
-  original_method_with = "#{fname}_with_#{lname}"
-  original_method_without = "#{fname}_without_#{lname}"
-  if !(check.nil?)
-    temp = fname.to_s.gsub(check[0],"")
-    original_method_with = "#{temp}_with_#{lname}#{check[0]}"
-    original_method_without = "#{temp}_without_#{lname}#{check[0]}"
-  end
-  return original_method, original_method_with, original_method_without
-end
+
 class Hello
   def greet
     puts "hello"
