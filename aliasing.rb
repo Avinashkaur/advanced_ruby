@@ -1,32 +1,42 @@
-$methods_scope = {}
 module MyModule
+
   module ClassMethods
     def chained_aliasing(fname, lname)
       user_label = ''
-      $methods_scope.each_pair do |key, value|
+      const_get(:Methods_scope).each_pair do |key, value|
         user_label = key if value.include?(fname)
       end
       original_method, original_method_with, original_method_without = function_name(fname, lname)
+      hash = self.const_get(:METHOD_HASH)
+      hash[original_method] = instance_method(original_method)
       body = %{
         #{user_label}
+        def #{original_method}
+          puts "--logging start"
+          self.class.const_get(:METHOD_HASH)['#{original_method}'].bind(self).call
+          puts "--logging end"
+        end
         def #{original_method_without}
-          #{original_method}
+          self.class.const_get(:METHOD_HASH)['#{original_method}'].bind(self).call
         end
         def #{original_method_with}
           puts "--logging start"
-          #{original_method}      
+          self.class.const_get(:METHOD_HASH)['#{original_method}'].bind(self).call      
           puts "--logging end"
         end
       }
       class_eval body
     end
   end
+  
   def self.included(klass)
     klass.extend ClassMethods
-    $methods_scope['public'] = klass.public_instance_methods(false)
-    $methods_scope['private'] = klass.private_instance_methods(false)
-    $methods_scope['protected'] = klass.protected_instance_methods(false)
-    puts $methods_scope
+    klass.const_set(:METHOD_HASH, {})
+    methods_scope = {}
+    methods_scope['public'] = klass.public_instance_methods(false)
+    methods_scope['private'] = klass.private_instance_methods(false)
+    methods_scope['protected'] = klass.protected_instance_methods(false)
+    klass.const_set(:Methods_scope, methods_scope)
   end
 end
 def function_name(fname, lname)
@@ -62,7 +72,8 @@ say = Hello.new
 say.greet_with_logger
 say.greet_without_logger
 say.greet
+puts
 say.correct_with_logger?
 say.correct_without_logger?
-
+say.correct?
 # say.secret_with_logger
