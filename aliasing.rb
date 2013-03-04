@@ -61,7 +61,7 @@ end
 say = Hello.new
 say.greet_with_logger
 say.greet_without_logger
-
+say.greet
 say.correct_with_logger?
 say.correct_without_logger?
 

@@ -1,6 +1,6 @@
 expr = ""
 loop do
-  $/ = "\n"
+  # $/ = "\n"
   expr += gets
   begin 
     if expr =~ /^[\s]*$\n/ 

@@ -11,7 +11,7 @@ def create_object_array( klass )
   while line = $FILEREADER.gets do 
     object = klass.new
     records = line.split(",").each { |element| element.strip! }
-    ($method_array_names.size).times do |i|
+    $method_array_names.each_with_index do |val,i|
       object.send "#{$method_array_names[i]}=", records[i]
     end
     $object_array << object

@@ -52,7 +52,7 @@ class Play
   include ObjectStore
   attr_accessor :age, :fname, :email
   validate_presence_of :fname, :age 
-  
+
   def validate
     return true if ((@age >= 18) && (@age < 30) && (@fname =~ /[a-zA-z]*/) && (@email =~ /^(?:\w+\.?)*\w+@(?:\w+\.?)*\w+$/))
     false
@@ -60,7 +60,7 @@ class Play
 end
 p2 = Play.new
 p2.fname = "av"
-p2.age = 23
+# p2.age = 23
 p2.email = "avinash.kaur@vinsol.com"
 p2.save
 
@@ -72,7 +72,7 @@ p3.save
 
 p4 = Play.new
 p4.fname = "simran"
-p4.age = 23
+# p4.age = 23
 p4.email = "sim@gmail.com"
 p4.save
 puts Play.find_by_age(23)
