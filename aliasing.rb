@@ -15,9 +15,8 @@ module MyModule
     end
     def chained_aliasing(fname, lname)
       user_label = ''
-      const_get(:Methods_scope).each_pair do |key, value|
-        user_label = key if value.include?(fname)
-      end
+      const_get(:Methods_scope).each_pair { |key, value| user_label = key if value.include?(fname) }
+      
       original_method, original_method_with, original_method_without = rename_methods(fname, lname)
       hash = self.const_get(:METHOD_HASH)
       hash[original_method] = instance_method(original_method)
@@ -37,6 +36,7 @@ module MyModule
           puts "--logging end"
         end
       }
+      # puts body
       class_eval body
     end
   end
