@@ -8,12 +8,16 @@ module FilterModule
       filter_method
       super
     end
-   
+
     def before_filter(*args)
-      $before_filter_methods, $target_methods_before_filter = get_methods(args)
+      $before_filter_methods = args
     end 
     def after_filter(*args)
-      $after_filter_methods, $target_methods_after_filter = get_methods(args)
+      $after_filter_methods = args
+    end
+    def prepare_for_filter
+      $before_filter_methods, $target_methods_before_filter = get_methods($before_filter_methods)
+      $after_filter_methods, $target_methods_after_filter = get_methods($after_filter_methods)
     end
 
     def get_methods(args_array)
@@ -34,6 +38,7 @@ module FilterModule
     end
 
     def filter_method
+      prepare_for_filter
       $target_methods_before_filter.flatten.each do |meth|
         original_method = instance_method(meth.to_sym)
         define_method(meth) do
@@ -61,6 +66,8 @@ module FilterModule
 end
 class MyClass
   include FilterModule
+  before_filter :greet, :only=>[:sleep]
+  after_filter :say, :bye, :except=>[:hello]  
   def say
     puts "say method"
   end
@@ -76,8 +83,7 @@ class MyClass
   def hello
     puts "hello method"
   end
-  before_filter :greet, :only=>[:sleep]
-  after_filter :say, :bye, :except=>[:hello]
+
 end
 
 obj = MyClass.new
